@@ -1,0 +1,7 @@
+<resources>
+    <dimen name="view_item_corner_radius">10dp</dimen>
+    <dimen name="shadow_size">3dp</dimen>
+
+    <dimen name="selected_item_view_stroke_width">2dp</dimen>
+    <dimen name="selected_item_view_left_padding">8dp</dimen>
+</resources>

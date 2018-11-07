@@ -1,0 +1,111 @@
+ext {
+    // Version
+    versions = [
+            appVersionName      : '1.0',
+            appVersionCode      : 1,
+
+            appBuildTools       : '28.0.3',
+            appCompileSdk       : 27,
+            appMinSdk           : 16,
+            appTragetSdk        : 27,
+
+            appGradleBuildToolls: '3.2.0',
+            appGradle           : '4.6',
+
+            appKotlin           : '1.2.61',
+            appSupportLib       : '27.1.1',
+            appSupportMultidex  : '1.0.3',
+            appGoogleService    : '4.0.1',
+
+            viewConstrantLayout : '1.1.3',
+            viewAnko            : '0.10.6',
+            viewBaseRvAdapter   : '2.9.30',
+            viewSwipeBackHelper : '3.1.2',
+
+            googleService       : '15.0.1',
+
+            firebaseCore        : '16.0.1',
+            firestore           : '16.0.0',
+            database            : '16.0.1',
+
+            testEspresso        : '3.0.2',
+            testJunit           : '4.12',
+            testRunner          : '1.0.2',
+            testRobolectric     : '3.8',
+            testKoin            : '1.0.1',
+            testGson            : '20160810',
+
+            toolGson            : '2.8.5',
+
+            netOkhttp           : '3.11.0',
+
+            diKoin              : '1.0.1'
+    ]
+
+    testInstrumentationRunner = "android.support.test.runner.AndroidJUnitRunner"
+
+    gradlePlugins = [
+            android       : "com.android.tools.build:gradle:$versions.appGradleBuildToolls",
+            kotlin        : "org.jetbrains.kotlin:kotlin-gradle-plugin:$versions.appKotlin",
+            google_service: "com.google.gms:google-services:$versions.appGoogleService"
+    ]
+
+    support = [
+            support_v13        : "com.android.support:support-v13:$versions.appSupportLib",
+            appcompat_v7       : "com.android.support:appcompat-v7:$versions.appSupportLib",
+            support_v4         : "com.android.support:support-v4:$versions.appSupportLib",
+            support_annotations: "com.android.support:support-annotations:$versions.appSupportLib",
+            multidex           : "com.android.support:multidex:$versions.appSupportMultidex"
+    ]
+
+    view = [
+            constraint_layout: "com.android.support.constraint:constraint-layout:$versions.viewConstrantLayout",
+            recyclerview_v7  : "com.android.support:recyclerview-v7:$versions.appSupportLib",
+            cardview_v7      : "com.android.support:cardview-v7:$versions.appSupportLib",
+            base_rv_adapter  : "com.github.CymChad:BaseRecyclerViewAdapterHelper:$versions.viewBaseRvAdapter",
+            design           : "com.android.support:design:$versions.appSupportLib",
+            swipe_back_helper: "com.jude:swipebackhelper:$versions.viewSwipeBackHelper"
+    ]
+
+    anko = [
+            anko                  : "org.jetbrains.anko:anko:$versions.viewAnko",
+            anko_appcompat_v7     : "org.jetbrains.anko:anko-appcompat-v7:$versions.viewAnko",
+            anko_constraint_layout: "org.jetbrains.anko:anko-constraint-layout:$versions.viewAnko",
+            anko_recyclerview_v7  : "org.jetbrains.anko:anko-recyclerview-v7:$versions.viewAnko",
+            anko_cardview_v7      : "org.jetbrains.anko:anko-cardview-v7:$versions.viewAnko",
+            anko_design           : "org.jetbrains.anko:anko-design:$versions.viewAnko"
+    ]
+
+    koin = [
+            core   : "org.koin:koin-core:$versions.diKoin",
+            android: "org.koin:koin-android:$versions.diKoin"
+    ]
+
+    service = [
+//            service         : "com.google.android.gms:play-services:$versions.googleService",
+service_location: "com.google.android.gms:play-services-location:$versions.googleService"
+    ]
+
+    firebase = [
+            firebase_core: "com.google.firebase:firebase-core:$versions.firebaseCore",
+            firestore    : "com.google.firebase:firebase-firestore:$versions.firestore",
+            database     : "com.google.firebase:firebase-database:$versions.database"
+    ]
+
+    test = [
+            junit      : "junit:junit:$versions.testJunit",
+            runner     : "com.android.support.test:runner:$versions.testRunner",
+            espresso   : "com.android.support.test.espresso:espresso-core:$versions.testEspresso",
+            robolectric: "org.robolectric:robolectric:$versions.testRobolectric",
+            koin       : "org.koin:koin-test:$versions.testKoin",
+            gson       : "org.json:json:$versions.testGson"
+    ]
+
+    net = [
+            okhttp: "com.squareup.okhttp3:okhttp:$versions.netOkhttp"
+    ]
+
+    tool = [
+            gson: "com.google.code.gson:gson:$versions.toolGson"
+    ]
+}

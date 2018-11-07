@@ -1,0 +1,94 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+
+android {
+    compileSdkVersion versions.appCompileSdk
+    buildToolsVersion versions.appBuildTools
+    defaultConfig {
+        applicationId "demo.ticker"
+        minSdkVersion versions.appMinSdk
+        targetSdkVersion versions.appTragetSdk
+        versionCode versions.appVersionCode
+        versionName versions.appVersionName
+        testInstrumentationRunner rootProject.ext.testInstrumentationRunner
+        multiDexEnabled true
+    }
+    testOptions {
+        unitTests.returnDefaultValues = true
+    }
+    signingConfigs {
+        release {
+            if (project.hasProperty("storeFile")) {
+                storeFile file("$project.storeFile")
+                storePassword "$project.storePassword"
+                keyAlias "$project.keyAlias"
+                keyPassword "$project.keyPassword"
+            }
+        }
+    }
+    buildTypes {
+        release {
+            minifyEnabled true
+            shrinkResources true
+            debuggable false
+            zipAlignEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+            buildConfigField "String", "APP_NAME", "\"Tickers\""
+            resValue("string", "app_name", "Tickers")
+        }
+        debug {
+            minifyEnabled false
+            debuggable true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig android.signingConfigs.debug
+            applicationIdSuffix ".dev"
+            buildConfigField "String", "APP_NAME", "\"Tickers-Debug\""
+            resValue("string", "app_name", "Tickers-Debug")
+        }
+    }
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+        test.java.srcDirs += 'src/test/kotlin'
+        androidTest.java.srcDirs += 'src/androidTest/kotlin'
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    // support
+    implementation support.support_v13
+    implementation support.appcompat_v7
+    implementation support.support_v4
+    implementation support.support_annotations
+    implementation support.multidex
+    // view
+    implementation view.constraint_layout
+    implementation view.recyclerview_v7
+    implementation view.cardview_v7
+    implementation view.base_rv_adapter
+    implementation view.design
+    implementation view.swipe_back_helper
+    // Anko
+    implementation anko.anko
+    implementation anko.anko_appcompat_v7
+    implementation anko.anko_constraint_layout
+    implementation anko.anko_recyclerview_v7
+    implementation anko.anko_cardview_v7
+    implementation anko.anko_design
+    // DI Koin
+    implementation koin.core
+    implementation koin.android
+    // tools
+    implementation tool.gson
+    // testing
+    testImplementation test.junit
+    testImplementation test.robolectric
+    testImplementation test.koin
+    testImplementation test.gson
+    androidTestImplementation test.runner
+    androidTestImplementation test.espresso
+    // net
+    implementation net.okhttp
+}
