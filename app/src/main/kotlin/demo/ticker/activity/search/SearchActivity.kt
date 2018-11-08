@@ -11,15 +11,19 @@ import demo.ticker.getTickersApiUrl
 import demo.ticker.isJsonObject
 import demo.ticker.model.data.ResponseTickersResult
 import demo.ticker.model.entity.SearchEntity
+import demo.ticker.model.repo.Repository
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.setContentView
 import org.jetbrains.anko.toast
+import org.koin.android.ext.android.inject
 
 class SearchActivity : BaseActivity() {
 
     val TAG = this.javaClass.simpleName
 
     var searchView: android.support.v7.widget.SearchView? = null
+
+    val repository: Repository by inject()
 
     val searchEvent = SearchEvent()
 
@@ -82,23 +86,41 @@ class SearchActivity : BaseActivity() {
     }
 
     fun performGetTickers() {
-        requestGetApi(getTickersApiUrl(), object : ResponseResult {
-            override fun onSuccess(result: String) {
-                Log.d(TAG, "onSuccess: $result")
-                if (isJsonObject(result)) {
-                    val resultData = Gson().fromJson(result, ResponseTickersResult::class.java)
-                    Log.d(TAG, "resultData: $resultData")
-                } else {
-                    toast("Response content is not a json format")
+        doAsync {
+            requestGetApi(getTickersApiUrl(), object : ResponseResult {
+                override fun onSuccess(result: String) {
+                    Log.d(TAG, "onSuccess: $result")
+                    if (isJsonObject(result)) {
+                        val resultData = Gson().fromJson(result, ResponseTickersResult::class.java)
+                        Log.d(TAG, "resultData: $resultData")
+                        if (resultData.success == null) {
+                            toast("Response content error!")
+                            return
+                        }
+                        if (resultData.success) {
+                            resultData?.result?.tickers?.let { list ->
+                                searchEvent.searchEntityList.postValue(repository.getSearchEntity(list))
+                                return
+                            }
+                        } else {
+                            resultData.error?.error_code?.let { errorMsg ->
+                                toast(errorMsg)
+                                return
+                            }
+                            toast("Response content error!")
+                        }
+                    } else {
+                        toast("Response content is not a json format")
+                    }
                 }
-            }
 
-            override fun onFailure(message: String?) {
-                Log.d(TAG, "onFailure: $message")
-                if (message != null) {
-                    toast(message)
+                override fun onFailure(message: String?) {
+                    Log.d(TAG, "onFailure: $message")
+                    if (message != null) {
+                        toast(message)
+                    }
                 }
-            }
-        })
+            })
+        }
     }
 }
