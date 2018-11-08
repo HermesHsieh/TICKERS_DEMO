@@ -1,9 +1,11 @@
 package demo.ticker.activity.search
 
+import android.arch.lifecycle.MutableLiveData
 import android.os.Bundle
 import android.support.v4.widget.SwipeRefreshLayout
 import android.util.Log
 import android.view.Menu
+import android.view.MenuItem
 import com.google.gson.Gson
 import demo.ticker.R
 import demo.ticker.activity.BaseActivity
@@ -27,7 +29,7 @@ class SearchActivity : BaseActivity() {
 
     val repository: Repository by inject()
 
-    val searchEvent = SearchEvent()
+    val searchEntityList = MutableLiveData<List<SearchEntity>>()
 
     val searchAdapter = SearchAdapter()
 
@@ -37,7 +39,7 @@ class SearchActivity : BaseActivity() {
         view.setContentView(this)
         displayHomeButton(false)
 
-        searchEvent.searchEntityList.observe(this, android.arch.lifecycle.Observer { list ->
+        searchEntityList.observe(this, android.arch.lifecycle.Observer { list ->
             find<SwipeRefreshLayout>(R.id.swipe_refresh_view).isRefreshing = false
             list?.let {
                 searchAdapter.list = list as ArrayList<SearchEntity>
@@ -46,21 +48,6 @@ class SearchActivity : BaseActivity() {
         })
 
         searchAdapter.setListener { position, entity ->
-            //            val centerId = entity.data.centerId
-//            if (!dbRepository.isAddedFavoriteCenter(centerId)) {
-//                val result = dbRepository.addFavoriteCenter(centerId)
-//                if (result > 0) {
-//                    val decorView = window.peekDecorView()
-//                    if (decorView != null) {
-//                        val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-//                        inputMethodManager.hideSoftInputFromWindow(decorView.windowToken, 0)
-//                    }
-//                    setResult(Activity.RESULT_OK)
-//                    finish()
-//                } else {
-//                    toast("Added fail")
-//                }
-//            }
         }
     }
 
@@ -69,8 +56,14 @@ class SearchActivity : BaseActivity() {
         performGetTickers()
     }
 
-    fun queryCenter(queryWord: String) {
+    fun queryTickers(queryWord: String) {
         doAsync {
+            if (!queryWord.isEmpty()) {
+                val filterList = searchEntityList.value?.filter { it.data.pairName.toLowerCase().contains(queryWord.toLowerCase()) }
+                if (filterList != null) {
+                    searchEntityList.postValue(filterList)
+                }
+            }
         }
     }
 
@@ -88,7 +81,7 @@ class SearchActivity : BaseActivity() {
                         }
                         if (resultData.success) {
                             resultData?.result?.tickers?.let { list ->
-                                searchEvent.searchEntityList.postValue(repository.getSearchEntity(list))
+                                searchEntityList.postValue(repository.getSearchEntity(list))
                                 return
                             }
                         } else {
@@ -119,14 +112,25 @@ class SearchActivity : BaseActivity() {
         searchView = searchItem?.actionView as android.support.v7.widget.SearchView
         searchView?.setOnQueryTextListener(object : android.support.v7.widget.SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
-                queryCenter(query)
+                queryTickers(query)
                 searchView?.clearFocus()
                 return true
             }
 
             override fun onQueryTextChange(newText: String): Boolean {
-                queryCenter(newText)
+                queryTickers(newText)
                 return false
+            }
+        })
+        searchItem.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
+            override fun onMenuItemActionExpand(menuItem: MenuItem): Boolean {
+                return true
+            }
+
+            override fun onMenuItemActionCollapse(menuItem: MenuItem): Boolean {
+                searchView?.clearFocus()
+                performGetTickers()
+                return true
             }
         })
         return true
