@@ -3,13 +3,17 @@ package demo.ticker.activity.search
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
+import com.google.gson.Gson
 import demo.ticker.R
 import demo.ticker.activity.BaseActivity
 import demo.ticker.activity.displayHomeButton
 import demo.ticker.getTickersApiUrl
+import demo.ticker.isJsonObject
+import demo.ticker.model.data.ResponseTickersResult
 import demo.ticker.model.entity.SearchEntity
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.setContentView
+import org.jetbrains.anko.toast
 
 class SearchActivity : BaseActivity() {
 
@@ -61,21 +65,7 @@ class SearchActivity : BaseActivity() {
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_search, menu)
         val searchItem = menu?.findItem(R.id.menu_search_view)
-//        searchItem?.expandActionView()
-//        searchItem?.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
-//            override fun onMenuItemActionExpand(menuItem: MenuItem): Boolean {
-//                return false
-//            }
-//
-//            override fun onMenuItemActionCollapse(menuItem: MenuItem): Boolean {
-//                searchView?.clearFocus()
-//                finish()
-//                return false
-//            }
-//        })
-
         searchView = searchItem?.actionView as android.support.v7.widget.SearchView
-//        searchView?.isIconified = false
         searchView?.setOnQueryTextListener(object : android.support.v7.widget.SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
                 queryCenter(query)
@@ -92,13 +82,22 @@ class SearchActivity : BaseActivity() {
     }
 
     fun performGetTickers() {
-        requestGetApi(getTickersApiUrl(), object : ResponseApiString {
-            override fun onSuccess(result: String?) {
+        requestGetApi(getTickersApiUrl(), object : ResponseResult {
+            override fun onSuccess(result: String) {
                 Log.d(TAG, "onSuccess: $result")
+                if (isJsonObject(result)) {
+                    val resultData = Gson().fromJson(result, ResponseTickersResult::class.java)
+                    Log.d(TAG, "resultData: $resultData")
+                } else {
+                    toast("Response content is not a json format")
+                }
             }
 
             override fun onFailure(message: String?) {
                 Log.d(TAG, "onFailure: $message")
+                if (message != null) {
+                    toast(message)
+                }
             }
         })
     }

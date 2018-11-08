@@ -12,7 +12,7 @@ fun AppCompatActivity.displayHomeButton(display: Boolean) {
 
 abstract class BaseActivity : AppCompatActivity() {
 
-    fun requestGetApi(url: String, callback: ResponseApiString) {
+    fun requestGetApi(url: String, callback: ResponseResult) {
         val request = Request.Builder().url(url).build()
         OkHttpClient().newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
@@ -20,13 +20,18 @@ abstract class BaseActivity : AppCompatActivity() {
             }
 
             override fun onResponse(call: Call, response: Response) {
-                callback.onSuccess(response.body()?.string())
+                val result = response.body()?.string()
+                if (result != null) {
+                    callback.onSuccess(result)
+                } else {
+                    callback.onFailure("Error! Can not get response body content")
+                }
             }
         })
     }
 
-    interface ResponseApiString {
-        fun onSuccess(result: String?)
+    interface ResponseResult {
+        fun onSuccess(result: String)
 
         fun onFailure(message: String?)
     }
