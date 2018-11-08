@@ -1,7 +1,6 @@
 package demo.ticker.model.repo
 
 import android.graphics.Color
-import android.util.Log
 import demo.ticker.extension.isZero
 import demo.ticker.model.bean.SearchBean
 import demo.ticker.model.data.TickerData
@@ -26,7 +25,8 @@ class RepositoryImpl : Repository {
 
     override fun getSearchEntity(list: List<TickerData>): List<SearchEntity> {
         val resultList = ArrayList<SearchEntity>()
-        for (data in list) {
+        val sortList = list.sortedBy { it.trading_pair_id }
+        for (data in sortList) {
             resultList.add(createSearchEntity(createSearchBean(data)))
         }
         return resultList
@@ -34,7 +34,6 @@ class RepositoryImpl : Repository {
 
     companion object {
         fun getPriceWaveInPercentage(latestPrice: String, beforePrice: String): String {
-            Log.d("TTTT", "latestPrice: $latestPrice, beforePrice: $beforePrice")
             var latestBigDecimal = BigDecimal(latestPrice)
             var beforeBigDecimal = BigDecimal(beforePrice)
             if (latestBigDecimal.isZero() || beforeBigDecimal.isZero()) {

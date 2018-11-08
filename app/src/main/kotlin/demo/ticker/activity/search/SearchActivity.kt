@@ -1,6 +1,7 @@
 package demo.ticker.activity.search
 
 import android.os.Bundle
+import android.support.v4.widget.SwipeRefreshLayout
 import android.util.Log
 import android.view.Menu
 import com.google.gson.Gson
@@ -13,6 +14,7 @@ import demo.ticker.model.data.ResponseTickersResult
 import demo.ticker.model.entity.SearchEntity
 import demo.ticker.model.repo.Repository
 import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.find
 import org.jetbrains.anko.setContentView
 import org.jetbrains.anko.toast
 import org.koin.android.ext.android.inject
@@ -27,6 +29,8 @@ class SearchActivity : BaseActivity() {
 
     val searchEvent = SearchEvent()
 
+    val searchAdapter = SearchAdapter()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val view = SearchView()
@@ -34,13 +38,14 @@ class SearchActivity : BaseActivity() {
         displayHomeButton(false)
 
         searchEvent.searchEntityList.observe(this, android.arch.lifecycle.Observer { list ->
+            find<SwipeRefreshLayout>(R.id.swipe_refresh_view).isRefreshing = false
             list?.let {
-                view.searchAdapter.list = list as ArrayList<SearchEntity>
-                view.searchAdapter.notifyDataSetChanged()
+                searchAdapter.list = list as ArrayList<SearchEntity>
+                searchAdapter.notifyDataSetChanged()
             }
         })
 
-        view.searchAdapter.setListener { position, entity ->
+        searchAdapter.setListener { position, entity ->
             //            val centerId = entity.data.centerId
 //            if (!dbRepository.isAddedFavoriteCenter(centerId)) {
 //                val result = dbRepository.addFavoriteCenter(centerId)
@@ -57,32 +62,16 @@ class SearchActivity : BaseActivity() {
 //                }
 //            }
         }
+    }
 
+    override fun onResume() {
+        super.onResume()
         performGetTickers()
     }
 
     fun queryCenter(queryWord: String) {
         doAsync {
         }
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu_search, menu)
-        val searchItem = menu?.findItem(R.id.menu_search_view)
-        searchView = searchItem?.actionView as android.support.v7.widget.SearchView
-        searchView?.setOnQueryTextListener(object : android.support.v7.widget.SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String): Boolean {
-                queryCenter(query)
-                searchView?.clearFocus()
-                return true
-            }
-
-            override fun onQueryTextChange(newText: String): Boolean {
-                queryCenter(newText)
-                return false
-            }
-        })
-        return true
     }
 
     fun performGetTickers() {
@@ -122,5 +111,24 @@ class SearchActivity : BaseActivity() {
                 }
             })
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_search, menu)
+        val searchItem = menu?.findItem(R.id.menu_search_view)
+        searchView = searchItem?.actionView as android.support.v7.widget.SearchView
+        searchView?.setOnQueryTextListener(object : android.support.v7.widget.SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String): Boolean {
+                queryCenter(query)
+                searchView?.clearFocus()
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String): Boolean {
+                queryCenter(newText)
+                return false
+            }
+        })
+        return true
     }
 }

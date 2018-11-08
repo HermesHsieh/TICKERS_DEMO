@@ -2,6 +2,7 @@ package demo.ticker.view
 
 import android.content.Context
 import android.graphics.Color
+import android.support.constraint.ConstraintLayout
 import android.support.constraint.ConstraintSet.PARENT_ID
 import android.view.Gravity
 import android.widget.FrameLayout
@@ -21,6 +22,7 @@ class SearchItemView : AnkoComponent<Context> {
             horizontalPadding = dip(5)
             layoutParams = FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT)
             constraintLayout {
+                layoutParams = ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.MATCH_PARENT, ConstraintLayout.LayoutParams.WRAP_CONTENT)
                 textView {
                     id = R.id.name_view
                     text = "BTC-ETH"
@@ -58,7 +60,7 @@ class SearchItemView : AnkoComponent<Context> {
                     rightToRight = PARENT_ID
                     matchConstraintPercentWidth = 0.3f
                 }
-            }.lparams(width = matchParent, height = matchParent).applyRecursively {
+            }.lparams(width = matchParent, height = wrapContent).applyRecursively {
                 when (it) {
                     is TextView -> {
                         it.textSize = 16f

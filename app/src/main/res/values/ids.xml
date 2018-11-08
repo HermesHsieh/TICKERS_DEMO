@@ -6,6 +6,7 @@
     <item name="name_view" type="id"/>
     <item name="price_view" type="id"/>
     <item name="percentage_view" type="id"/>
+    <item name="swipe_refresh_view" type="id"/>
 
     <item name="constraint_layout" type="id"/>
 </resources>
