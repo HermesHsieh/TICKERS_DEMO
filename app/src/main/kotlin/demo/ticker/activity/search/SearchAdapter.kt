@@ -9,6 +9,7 @@ import demo.ticker.model.entity.SearchEntity
 import demo.ticker.model.type.ViewItemType
 import demo.ticker.view.SearchItemView
 import org.jetbrains.anko.AnkoContext
+import org.jetbrains.anko.backgroundColor
 import org.jetbrains.anko.find
 
 class SearchAdapter : RecyclerView.Adapter<SearchAdapter.SearchViewHolder>() {
@@ -52,6 +53,8 @@ class SearchAdapter : RecyclerView.Adapter<SearchAdapter.SearchViewHolder>() {
 
     inner class SearchViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val name = itemView.find<TextView>(R.id.name_view)
+        val price = itemView.find<TextView>(R.id.price_view)
+        val percentage = itemView.find<TextView>(R.id.percentage_view)
         var itemPosition: Int = -1
         var itemEntity: SearchEntity = SearchEntity()
 
@@ -60,7 +63,12 @@ class SearchAdapter : RecyclerView.Adapter<SearchAdapter.SearchViewHolder>() {
         }
 
         fun bindItem(entity: SearchEntity) {
-            name.text = entity.data.pairName
+            with(entity.data) {
+                name.text = this.pairName
+                price.text = this.lastTradePrice
+                percentage.text = this.percentText
+                percentage.backgroundColor = this.percentBgColorRes
+            }
         }
     }
 }

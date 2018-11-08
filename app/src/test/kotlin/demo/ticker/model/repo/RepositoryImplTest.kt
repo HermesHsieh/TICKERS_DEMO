@@ -20,32 +20,36 @@ class RepositoryImplTest {
 
     @Test
     fun Get_Percentage_Bg_Color_In_Invalid() {
-        val test = "-"
-        val result = RepositoryImpl.getPercentageBgColor(test)
+        val latestPrice = "0"
+        val openPrice = "15433.543"
+        val result = RepositoryImpl.getPercentageBgColor(latestPrice, openPrice)
         System.out.println("Result result $result")
         Assert.assertEquals(Color.GRAY, result)
     }
 
     @Test
     fun Get_Percentage_Bg_Color_In_Minus() {
-        val test = "-43.1%"
-        val result = RepositoryImpl.getPercentageBgColor(test)
+        val latestPrice = "24.2533"
+        val openPrice = "43.543"
+        val result = RepositoryImpl.getPercentageBgColor(latestPrice, openPrice)
         System.out.println("Result result $result")
         Assert.assertEquals(Color.GREEN, result)
     }
 
     @Test
     fun Get_Percentage_Bg_Color_In_Plus() {
-        val test = "0.41%"
-        val result = RepositoryImpl.getPercentageBgColor(test)
+        val latestPrice = "24.2533"
+        val openPrice = "13.543"
+        val result = RepositoryImpl.getPercentageBgColor(latestPrice, openPrice)
         System.out.println("Result result $result")
         Assert.assertEquals(Color.RED, result)
     }
 
     @Test
     fun Get_Percentage_Bg_Color_In_Equals() {
-        val test = "0.00%"
-        val result = RepositoryImpl.getPercentageBgColor(test)
+        val latestPrice = "24.2533"
+        val openPrice = "24.2533"
+        val result = RepositoryImpl.getPercentageBgColor(latestPrice, openPrice)
         System.out.println("Result result $result")
         Assert.assertEquals(Color.LTGRAY, result)
     }
@@ -89,7 +93,7 @@ class RepositoryImplTest {
         System.out.println("open_24h: ${data.open_24h}")
         val result = RepositoryImpl.getPriceWaveInPercentage(data.last_trade_price, data.open_24h)
         System.out.println("Result result $result")
-        Assert.assertEquals("0.26%", result)
+        Assert.assertEquals("26.86%", result)
     }
 
     @Test
@@ -111,12 +115,12 @@ class RepositoryImplTest {
         // last_trade_price: 2.7389564
         // open_24h: 3
         // Result is 0.912985466666667
-        // Show  0.91-1 -> -0.09
+        // Show  0.912985466666667-1 -> -0.087014533333333
         val data = Gson().fromJson(MOCK_DATA_LESS, TickerData::class.java)
         System.out.println("last_trade_price: ${data.last_trade_price}")
         System.out.println("open_24h: ${data.open_24h}")
         val result = RepositoryImpl.getPriceWaveInPercentage(data.last_trade_price, data.open_24h)
         System.out.println("Result result $result")
-        Assert.assertEquals("-0.09%", result)
+        Assert.assertEquals("-8.71%", result)
     }
 }
