@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentActivity
 import demo.ticker.MyApplication
 import java.io.Serializable
+import java.math.BigDecimal
 import kotlin.properties.ReadWriteProperty
 
 object DelegatesExt {
@@ -49,4 +50,9 @@ fun <T : Any> FragmentActivity.getValue(key: String, default: T) = lazy {
  */
 fun <T : Any> Fragment.getValue(key: String, default: T) = lazy {
     arguments?.get(key)  as? T ?: default
+}
+
+
+fun BigDecimal.isZero(): Boolean {
+    return compareTo(BigDecimal.ZERO) == 0
 }

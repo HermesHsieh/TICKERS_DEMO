@@ -60,7 +60,7 @@ class SearchAdapter : RecyclerView.Adapter<SearchAdapter.SearchViewHolder>() {
         }
 
         fun bindItem(entity: SearchEntity) {
+            name.text = entity.data.pairName
         }
-
     }
 }

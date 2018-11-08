@@ -1,5 +1,7 @@
 package demo.ticker.model.repo
 
+import android.graphics.Color
+import demo.ticker.extension.isZero
 import demo.ticker.model.bean.SearchBean
 import demo.ticker.model.data.TickerData
 import demo.ticker.model.entity.SearchEntity
@@ -11,6 +13,8 @@ class RepositoryImpl : Repository {
         val bean = SearchBean()
         bean.pairName = data.trading_pair_id
         bean.lastTradePrice = data.last_trade_price
+        bean.percentText = getPriceWaveInPercentage(data.last_trade_price, data.open_24h)
+        bean.percentBgColorRes = getPercentageBgColor(bean.percentText)
         return bean
     }
 
@@ -30,7 +34,20 @@ class RepositoryImpl : Repository {
         fun getPriceWaveInPercentage(latestPrice: String, beforePrice: String): String {
             var latestBigDecimal = BigDecimal(latestPrice)
             var beforeBigDecimal = BigDecimal(beforePrice)
-            return latestBigDecimal.divide(beforeBigDecimal, 2, BigDecimal.ROUND_DOWN).toPlainString() + "%"
+            if (latestBigDecimal.isZero() || beforeBigDecimal.isZero()) {
+                return "-"
+            } else {
+                return latestBigDecimal.divide(beforeBigDecimal, 2, BigDecimal.ROUND_DOWN).subtract(BigDecimal.ONE).toPlainString() + "%"
+            }
+        }
+
+        fun getPercentageBgColor(percentage: String): Int {
+            return when {
+                percentage == "-" -> Color.GRAY
+                percentage.startsWith("-") && percentage.length > 1 -> Color.GREEN
+                percentage == "0.00%" -> Color.LTGRAY
+                else -> Color.RED
+            }
         }
     }
 }
