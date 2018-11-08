@@ -17,21 +17,21 @@ import com.google.gson.annotations.SerializedName
  */
 data class TickerData(
         @SerializedName("trading_pair_id")
-        val trading_pair_id: String?,
+        val trading_pair_id: String = "",
         @SerializedName("timestamp")
-        val timestamp: Long?,
+        val timestamp: Long = 0L,
         @SerializedName("24h_high")
-        val high_24h: String?,
+        val high_24h: String = "",
         @SerializedName("24h_low")
-        val low_24h: String?,
+        val low_24h: String = "",
         @SerializedName("24h_open")
-        val open_24h: String?,
+        val open_24h: String = "",
         @SerializedName("24h_volume")
-        val volume_24h: String?,
+        val volume_24h: String = "",
         @SerializedName("last_trade_price")
-        val last_trade_price: String?,
+        val last_trade_price: String = "",
         @SerializedName("highest_bid")
-        val highest_bid: String?,
+        val highest_bid: String = "",
         @SerializedName("lowest_ask")
-        val lowest_ask: String?
+        val lowest_ask: String = ""
 )

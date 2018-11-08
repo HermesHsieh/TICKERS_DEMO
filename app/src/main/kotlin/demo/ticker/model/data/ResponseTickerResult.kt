@@ -27,9 +27,9 @@ import com.google.gson.annotations.SerializedName
  **/
 data class ResponseTickerResult(
         @SerializedName("success")
-        val success: Boolean?,
+        val success: Boolean = false,
         @SerializedName("result")
-        val result: TickerResult?,
+        val result: TickerResult = TickerResult(),
         @SerializedName("error")
-        val error: ErrorData?
+        val error: ErrorData = ErrorData()
 )

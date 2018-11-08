@@ -9,5 +9,5 @@ import com.google.gson.annotations.SerializedName
  */
 class ErrorData(
         @SerializedName("error_code")
-        val error_code: String?
+        val error_code: String = ""
 )

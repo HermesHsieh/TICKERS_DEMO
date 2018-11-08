@@ -4,5 +4,5 @@ import com.google.gson.annotations.SerializedName
 
 data class TickerResult(
         @SerializedName("ticker")
-        val ticker: TickerData?
+        val ticker: TickerData = TickerData()
 )
