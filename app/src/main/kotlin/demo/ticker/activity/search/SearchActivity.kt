@@ -29,7 +29,11 @@ class SearchActivity : BaseActivity() {
 
     val repository: Repository by inject()
 
+    var searchSourceList = ArrayList<SearchEntity>()
+
     val searchEntityList = MutableLiveData<List<SearchEntity>>()
+
+    var searchItem: MenuItem? = null
 
     val searchAdapter = SearchAdapter()
 
@@ -59,7 +63,7 @@ class SearchActivity : BaseActivity() {
     fun queryTickers(queryWord: String) {
         doAsync {
             if (!queryWord.isEmpty()) {
-                val filterList = searchEntityList.value?.filter { it.data.pairName.toLowerCase().contains(queryWord.toLowerCase()) }
+                val filterList = searchSourceList.filter { it.data.pairName.toLowerCase().contains(queryWord.toLowerCase()) }
                 if (filterList != null) {
                     searchEntityList.postValue(filterList)
                 }
@@ -81,7 +85,8 @@ class SearchActivity : BaseActivity() {
                         }
                         if (resultData.success) {
                             resultData?.result?.tickers?.let { list ->
-                                searchEntityList.postValue(repository.getSearchEntity(list))
+                                searchSourceList = repository.getSearchEntity(list) as ArrayList<SearchEntity>
+                                searchEntityList.postValue(searchSourceList)
                                 return
                             }
                         } else {
@@ -108,7 +113,7 @@ class SearchActivity : BaseActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_search, menu)
-        val searchItem = menu?.findItem(R.id.menu_search_view)
+        searchItem = menu?.findItem(R.id.menu_search_view)
         searchView = searchItem?.actionView as android.support.v7.widget.SearchView
         searchView?.setOnQueryTextListener(object : android.support.v7.widget.SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
@@ -122,7 +127,7 @@ class SearchActivity : BaseActivity() {
                 return false
             }
         })
-        searchItem.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
+        searchItem?.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
             override fun onMenuItemActionExpand(menuItem: MenuItem): Boolean {
                 return true
             }

@@ -8,6 +8,7 @@ import org.jetbrains.anko.AnkoComponent
 import org.jetbrains.anko.AnkoContext
 import org.jetbrains.anko.backgroundColor
 import org.jetbrains.anko.constraint.layout.constraintLayout
+import org.jetbrains.anko.longToast
 import org.jetbrains.anko.recyclerview.v7.recyclerView
 import org.jetbrains.anko.support.v4.swipeRefreshLayout
 
@@ -20,7 +21,12 @@ class SearchView : AnkoComponent<SearchActivity> {
             swipeRefreshLayout {
                 id = R.id.swipe_refresh_view
                 setOnRefreshListener {
-                    ui.owner.performGetTickers()
+                    if (ui.owner.searchItem != null && !ui.owner.searchItem!!.isActionViewExpanded) {
+                        ui.owner.performGetTickers()
+                    } else {
+                        longToast("You can't refresh in search mode")
+                        isRefreshing = false
+                    }
                 }
                 recyclerView {
                     layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
