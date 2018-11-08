@@ -15,10 +15,7 @@ import demo.ticker.isJsonObject
 import demo.ticker.model.data.ResponseTickersResult
 import demo.ticker.model.entity.SearchEntity
 import demo.ticker.model.repo.Repository
-import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.find
-import org.jetbrains.anko.setContentView
-import org.jetbrains.anko.toast
+import org.jetbrains.anko.*
 import org.koin.android.ext.android.inject
 
 class SearchActivity : BaseActivity() {
@@ -44,7 +41,7 @@ class SearchActivity : BaseActivity() {
         displayHomeButton(false)
 
         searchEntityList.observe(this, android.arch.lifecycle.Observer { list ->
-            find<SwipeRefreshLayout>(R.id.swipe_refresh_view).isRefreshing = false
+            setRefreshView(false)
             list?.let {
                 searchAdapter.list = list as ArrayList<SearchEntity>
                 searchAdapter.notifyDataSetChanged()
@@ -80,7 +77,10 @@ class SearchActivity : BaseActivity() {
                         val resultData = Gson().fromJson(result, ResponseTickersResult::class.java)
                         Log.d(TAG, "resultData: $resultData")
                         if (resultData.success == null) {
-                            toast("Response content error!")
+                            uiThread {
+                                setRefreshView(false)
+                                toast("Response content error!")
+                            }
                             return
                         }
                         if (resultData.success) {
@@ -91,20 +91,32 @@ class SearchActivity : BaseActivity() {
                             }
                         } else {
                             resultData.error?.error_code?.let { errorMsg ->
-                                toast(errorMsg)
+                                uiThread {
+                                    setRefreshView(false)
+                                    toast(errorMsg)
+                                }
                                 return
                             }
-                            toast("Response content error!")
+                            uiThread {
+                                setRefreshView(false)
+                                toast("Response content error!")
+                            }
                         }
                     } else {
-                        toast("Response content is not a json format")
+                        uiThread {
+                            setRefreshView(false)
+                            toast("Response content is not a json format")
+                        }
                     }
                 }
 
                 override fun onFailure(message: String?) {
                     Log.d(TAG, "onFailure: $message")
                     if (message != null) {
-                        toast(message)
+                        uiThread {
+                            setRefreshView(false)
+                            toast(message)
+                        }
                     }
                 }
             })
@@ -139,5 +151,9 @@ class SearchActivity : BaseActivity() {
             }
         })
         return true
+    }
+
+    fun setRefreshView(status: Boolean) {
+        find<SwipeRefreshLayout>(R.id.swipe_refresh_view).isRefreshing = status
     }
 }
